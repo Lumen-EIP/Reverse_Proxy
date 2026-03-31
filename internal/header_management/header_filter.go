@@ -19,6 +19,19 @@ func DeleteHopHeader(headerMap http.Header) {
 	}
 }
 
+func SetForwardHeader(inRequest, outRequest *http.Request) {
+	clientIpAddress := ExtractIpAddress(inRequest)
+
+	previousForwardHeader, isPresent := outRequest.Header["X-Forwarded-For"]
+	if isPresent && len(previousForwardHeader) > 0 {
+		outRequest.Header.Set("X-Forwarded-For", previousForwardHeader[0]+" "+clientIpAddress)
+	} else {
+		outRequest.Header.Set("X-Forwarded-For", clientIpAddress)
+	}
+
+	outRequest.Header.Set("X-Forwarded-Host", inRequest.Host)
+}
+
 func CopyHeader(srcHeader, dstHeader http.Header) {
 	for key, subHeaders := range srcHeader {
 		for _, header := range subHeaders {
