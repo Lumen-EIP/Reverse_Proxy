@@ -7,7 +7,7 @@ import (
 
 func DeleteHopHeader(headerMap http.Header) {
 	for _, headers := range headerMap["Connection"] {
-		for _, header := range strings.Split(headers, "") {
+		for _, header := range strings.Split(headers, " ") {
 			if strings.TrimSpace(header) != "" {
 				headerMap.Del(header)
 			}
@@ -30,6 +30,7 @@ func SetForwardHeader(inRequest, outRequest *http.Request) {
 	}
 
 	outRequest.Header.Set("X-Forwarded-Host", inRequest.Host)
+	outRequest.Header.Set("X-Forwarded-Proto", "http")
 }
 
 func CopyHeader(srcHeader, dstHeader http.Header) {
